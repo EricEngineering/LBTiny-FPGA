@@ -16,7 +16,7 @@ module pointer_register(
     reg [11:0] data;
 
     // Internal shadow register
-    shadow_reg #(W = 12, DEFAULT = 0) pr(
+    shadow_reg #(.W(12), .DEFAULT(0)) pr(
         .data(data),
         .latch_en(latch_en),
         .backup(backup),

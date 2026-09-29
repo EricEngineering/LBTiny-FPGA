@@ -1,7 +1,7 @@
 // Reusable Register w/ shadow register Module
 `timescale 1ns/1ps
 
-module shadow_reg #(parameter W = 8, DEFAULT = 0) (
+module shadow_reg #(parameter W = 8, parameter DEFAULT = 0) (
     input wire [W-1:0] data,
     input wire latch_en,
     input wire backup,
@@ -11,7 +11,8 @@ module shadow_reg #(parameter W = 8, DEFAULT = 0) (
     output reg [W-1:0] register
 );
 
-    reg [W-1:0] shadow;
+    reg [W-1:0] shadow = DEFAULT;
+    initial register = DEFAULT;
 
     always @(posedge CLK or negedge RESET_n) begin
 
