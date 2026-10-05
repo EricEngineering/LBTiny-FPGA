@@ -8,12 +8,25 @@ set XSIM=%VIVADO_BIN%\xsim.bat
 
 set BUILD_DIR=build
 
+:: get the testbench file name
+set testbench=%1
+
 if not exist "%BUILD_DIR%" mkdir "%BUILD_DIR%"
 
 echo.
 echo ===== Compiling Verilog =====
 pushd "%BUILD_DIR%"
-call "%XVLOG%" -sv ..\src\lbtiny_bus_slave.v ..\tb\lbtiny_bus_slave_tb.v
+
+:: Iterate over all src files and compile the verilog
+for /R "..\src\" %%f in (*) do (
+    call "%XVLOG%" -sv %%f
+    if errorlevel 1 (
+        popd
+        goto failed
+    )
+)
+:: Compile the testbench
+call "%XVLOG%" -sv "..\tb\%testbench%.v"
 if errorlevel 1 (
     popd
     goto failed
@@ -21,7 +34,7 @@ if errorlevel 1 (
 
 echo.
 echo ===== Elaborating =====
-call "%XELAB%" lbtiny_bus_slave_tb -s sim
+call "%XELAB%" %testbench% -s sim -debug typical
 if errorlevel 1 (
     popd
     goto failed
